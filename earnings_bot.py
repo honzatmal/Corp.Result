@@ -14,7 +14,8 @@ def send_telegram_message(text):
         "text": text,
         "parse_mode": "Markdown"
     }
-    requests.post(url, json=payload)
+    response = requests.post(url, json=payload)
+    print(f"Telegram Response: {response.status_code}, {response.text}")
 
 def job():
     today = datetime.date.today()
@@ -33,15 +34,15 @@ def job():
                     dates = cal["Earnings Date"]
                     if len(dates) > 0:
                         edate = str(dates.iloc[0]).split(" ")[0]
-                        # 이번 달에 해당하는 지 확인
                         if edate.startswith(today.strftime('%Y-%m')):
                             found = True
                             message += f"🔹 **{symbol}**: `{edate}`\n"
-            except:
+            except Exception as e:
+                print(f"Error fetching {symbol}: {e}")
                 continue
                 
         if not found:
-            message += "이번 달에 예정된 주요 기업 실적 발표 일정이 야후 파이낸스에 아직 등록되지 않았습니다."
+            message += "이번 달 실적 발표 없음"
             
         send_telegram_message(message)
         return
@@ -59,7 +60,6 @@ def job():
                 dates = cal["Earnings Date"]
                 if len(dates) > 0:
                     edate = str(dates.iloc[0]).split(" ")[0]
-                    # 오늘 날짜와 일치하는 경우
                     if edate == today_str:
                         announced_any = True
                         eps_est = cal.get("Earnings High", "N/A")
@@ -68,12 +68,14 @@ def job():
                             
                         message += f"📢 **{symbol} 실적 발표일입니다!**\n"
                         message += f"   - 예상 EPS (Est): `{eps_est}`\n\n"
-        except:
+        except Exception as e:
+            print(f"Error fetching {symbol}: {e}")
             continue
 
-    # 오늘 발표 기업이 있을 때만 메시지 전송 (원하시면 조건문 제거 가능)
     if announced_any:
         send_telegram_message(message)
+    else:
+        print(f"[{today_str}] 오늘 발표 예정인 기업이 없습니다.")
 
 if __name__ == "__main__":
     job()
