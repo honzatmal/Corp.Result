@@ -19,18 +19,20 @@ def get_earnings_calendar():
     today = datetime.date.today()
     next_week = today + datetime.timedelta(days=7)
     
-    url = f"https://financialmodelingprep.com/api/v3/earning_calendar?from={today}&to={next_week}&apikey={FMP_API_KEY}"
+    # 최신 v3/earning-calendar (하이픈 형태) 또는 v4 엔드포인트로 변경
+    url = f"https://financialmodelingprep.com/api/v3/earning-calendar?from={today}&to={next_week}&apikey={FMP_API_KEY}"
     response = requests.get(url)
     
-    # 응답 상태 코드 확인 (디버깅용)
     if response.status_code != 200:
-        error_msg = f"⚠️ API 요청 실패 (상태 코드: {response.status_code})\n응답 내용: {response.text[:100]}"
-        return error_msg
+        return f"⚠️ API 요청 실패 (상태 코드: {response.status_code})\n응답 내용: {response.text[:150]}"
     
     data = response.json()
     
     if isinstance(data, dict) and "Error Message" in data:
         return f"⚠️ FMP API 오류: {data['Error Message']}"
+    
+    if not isinstance(data, list):
+        return f"⚠️ 데이터 형식 오류: {str(data)[:150]}"
     
     target_symbols = ["AAPL", "NVDA", "MSFT", "TSLA", "AMZN", "NFLX", "GOOGL", "META"]
     filtered_data = [item for item in data if item.get("symbol") in target_symbols]
