@@ -39,7 +39,7 @@ def check_earnings(group_name, symbol_dict):
     date_prefix = today.strftime('%Y-%m')
     
     # 1. 매월 1일인 경우: 월간 일정표 (카드 스타일 UI)
-    if True:
+    if today.day == 1
         message = f"📌 *[{year_month_str}] {group_name} 실적 캘린더*\n"
         message += "━━━━━━━━━━━━━━━━━━━\n"
         found = False
