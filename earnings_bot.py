@@ -22,7 +22,7 @@ def job():
     target_symbols = ["AAPL", "NVDA", "MSFT", "TSLA", "AMZN", "NFLX", "GOOGL", "META"]
     
     # 1. 매월 1일인 경우: 이번 달 전체 실적 일정 안내
-    if today.day == 1:
+    if True:
         message = f"🗓️ **[{today.strftime('%Y년 %m월')}] 주요 기업 실적 발표 월간 일정표**\n\n"
         found = False
         
